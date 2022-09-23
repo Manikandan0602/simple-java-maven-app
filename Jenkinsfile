@@ -4,23 +4,16 @@ pipeline{
         maven 'maven-3'
     }
     stages{
-        stage('compile'){
+        stage('build'){
             steps{
                 script{
-                    echo "maven code compile"
-                    sh 'mvn clean compile'
+                    echo "maven code build"
+                    sh 'mvn clean install'
                 }
             }
 
         }
-        stage('test'){
-            steps{
-                script{
-                    echo "maven code test"
-                    sh "mvn clean test"
-                }
-            }
-        }
+        
         
     }
 }
