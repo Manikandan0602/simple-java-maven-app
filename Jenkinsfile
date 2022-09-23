@@ -8,10 +8,18 @@ pipeline{
             steps{
                 script{
                     echo "maven code compile"
-                    sh 'mvn compile'
+                    sh 'mvn clean compile'
                 }
             }
 
+        }
+        stage('test'){
+            steps{
+                script{
+                    echo "maven code test"
+                    sh "mvn clean test"
+                }
+            }
         }
         
     }
