@@ -1,11 +1,14 @@
 pipeline{
     agent any
+    tools{
+        maven 'maven-3'
+    }
     stages{
-        stage('checkout'){
+        stage('compile'){
             steps{
                 script{
-                    checkout([$class: 'GitSCM', branches: [[name: 'pipelinetesting']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Manikandan0602/simple-java-maven-app.git']]])
-
+                    echo "maven code compile"
+                    sh 'mvn compile'
                 }
             }
 
