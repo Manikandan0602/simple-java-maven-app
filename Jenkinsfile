@@ -1,96 +1,44 @@
 pipeline{
-   agent {
-       label "mybuildserver"
-   }
-    tools {
-        maven 'maven'
+    agent any
+    tools{
+        maven 'maven-3'
     }
     stages{
-        stage("code checkout"){
+        stage("build"){
             steps{
-                echo "========checking out code from github repo========"
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: '2d64d980-832f-4dd0-b22d-b5cb971e0a7a', url: 'https://github.com/vcroshan/simple-java-maven-app.git']]])
-            }
-            post{
-                success{
-                    echo "========Code checkout from Github repo completed========"
-                }
-                failure{
-                    echo "========Code checkout from Github repo failed========"
+                script{
+                 sh 'mvn install'
                 }
             }
+            
         }
-        stage ("execute script") {
-            steps{
-                echo "Workspace:- $WORKSPACE"
-                echo "Job Name :- $JOB_NAME"
-                echo "Build ID :- $BUILD_ID"
-                echo "Jenkins Home :- $JENKINS_HOME"
-                echo "Inputparam1 : $Inputparam1"
-                echo "InputParam2 : $Inputparam2"
-            }
-        }
-        stage("Build") {
-            steps{
-                sh 'mvn -DskipTests clean package'
-            }
-            post{
-                success {
-                    echo "=========Build completed successfully============="
-                    
-                }
-                failure {
-                    echo "==========Build failed=========="
-                }
-            }
-        }
-        stage("Unit Testing") {
-            steps{
+        stage("test"){
+          steps{
+            script{
                 sh 'mvn test'
             }
-            post {
-                success{
-                    echo "======Unit testing completed successfull, publishing report========="
-                    junit 'target/surefire-reports/*.xml'
-                }
-                failure{
-                    echo "==========unit test cases failed, report not published===="
-                }
-            }
+          }  
         }
-        stage ("sonar scanning") {
-            steps {
-                script { 
-                    //def scannerHome = tool name: 'mySonarScanner';
-                    withSonarQubeEnv("MySonarqube") {
-                        sh "${tool("mySonarscanner")}/bin/sonar-scanner \
+        stage("sonar"){
+            steps{
+                script{
+                    withSonarQubeEnv(credentialsId: 'my_sonarqube') {
+                        sh "${tool("my_sonarqube")}/bin/sonar-scanner \
                         -Dsonar.projectKey=simple-java-maven-app \
                         -Dsonar.sources=. \
                         -Dsonar.java.binaries=target \
-                        -Dsonar.host.url=http://172.31.10.15:9000 \
-                        -Dsonar.login=cc178140ffe774764ca39f4c5f009e8756719923"
-                    }
-               }
+                        -Dsonar.host.url=http://172.31.8.235:9000 \
+                        -Dsonar.login=sqp_d6b135da71b1534c41cc60766f8e7294ab9abcca"
+                }
             }
         }
-        stage ("Upload to Nexus") {
-            steps {
-                sh "mvn -gs ${WORKSPACE}/settings.xml deploy"
-               }
+        stage("upload artifact"){
+            steps{
+                script{
+                    sh 'mvn -s setting.xml deploy'
+                }
             }
-
+        }
         
-    
-    }
-    post{
-        always{
-            echo "========always========"
-        }
-        success{
-            echo "========pipeline executed successfully ========"
-        }
-        failure{
-            echo "========pipeline execution failed========"
-        }
     }
 }
