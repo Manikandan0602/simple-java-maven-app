@@ -1,5 +1,5 @@
 pipeline{
-    agent any
+    agent any 
     tools{
         maven 'maven 3'
     }
@@ -7,17 +7,27 @@ pipeline{
         stage("build"){
             steps{
                 script{
-                 sh 'mvn install'
+                    sh 'mvn install'
                 }
+
             }
-            
         }
-        stage("test"){
-          steps{
-            script{
+        stage("unit testing"){
+            steps{
+                
                 sh 'mvn test'
             }
-          }  
+            post{
+                success{
+                     echo "junit testing is success,publishing report"
+                     junit 'target/surefire-reports/*.xml'
+                
+                }
+                failure{
+                    echo "junit testing is failed"
+
+                }
+            }
         }
         stage("sonar"){
             steps{
@@ -29,17 +39,20 @@ pipeline{
                         -Dsonar.java.binaries=target \
                         -Dsonar.host.url=http://172.31.15.244:9000 \
                         -Dsonar.login=sqp_d6b135da71b1534c41cc60766f8e7294ab9abcca"
+    
+                    }
                 }
             }
+
         }
         stage("upload artifact"){
             steps{
-                script{
-                    sh 'mvn -s setting.xml deploy'
-                }
+               sh 'mvn -s settings.xml deploy'
             }
         }
         
+        
+
     }
-}
+
 }
