@@ -1,5 +1,7 @@
 pipeline{
-    agent any 
+    agent {
+        label 'build_server'
+    } 
     tools{
         maven 'maven 3'
     }
