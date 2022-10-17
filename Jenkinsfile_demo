@@ -1,5 +1,5 @@
 @Library('pipeline-library-demo')_
 
 stage('demo'){
-    simple-maven-java()
+    simple_maven_java_test()
 }
