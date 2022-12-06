@@ -20,5 +20,13 @@ pipeline{
                 }
             }
         }
+        stage('install'){
+            steps{
+                script{
+                    echo "maven code install"
+                    sh 'mvn install'
+                }
+            }
+        }
     }
 }
