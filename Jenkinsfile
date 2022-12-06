@@ -7,11 +7,10 @@ pipeline{
         stage('build'){
             steps{
                 script{
-                    echo "maven code build"
                     sh 'mvn clean intall'
                 }
             }
         }
-        
+
     }
 }
