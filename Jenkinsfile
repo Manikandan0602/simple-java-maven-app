@@ -11,6 +11,20 @@ pipeline{
                 }
             }
         }
+        stage('sonar'){
+            steps{
+                script{
+                    withSonarQubeEnv(credentialsId: 'f9e4160f-e4f2-4d60-a350-4d2f4c4eb957') {
+                    sh "${tool("my_sonarqube")}/bin/sonar-scanner \
+                        -Dsonar.projectKey=simple-java-maven-pipeline \
+                        -Dsonar.sources=. \
+                        -Dsonar.java.binaries=target \
+                        -Dsonar.host.url=http://34.222.196.14:9000 \
+                        -Dsonar.login=sqp_f9ab70e415ce53fc0350035e379680183086b89b"
+                    }
+                }
+            }
+        }
 
     }
 }
