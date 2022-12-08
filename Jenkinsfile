@@ -40,6 +40,13 @@ pipeline{
                 }
             }
         }
+        stage('upload artifact'){
+            steps{
+                script{
+                    sh 'mvn -s settings.xml deploy'
+                }
+            }
+        }
     }
 }
 
