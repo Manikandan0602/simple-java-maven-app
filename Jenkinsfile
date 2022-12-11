@@ -43,7 +43,7 @@ pipeline{
         stage('upload artifact'){
             steps{
                 script{
-                    sh 'mvn deploy'
+                    sh 'mvn -s settings.xml deploy'
                 }
             }
         }
